@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using OpenQA.Selenium;
-using QA.Web.UITests.Utils.Browsers;
 using QA.Web.UITests.Views.Home;
 
 namespace QA.Web.UITests.Views.Common
@@ -10,10 +9,8 @@ namespace QA.Web.UITests.Views.Common
     {
         public WebUser()
         {
-           // browser = GetSelectedBrowser();
-            Web = new WebInitializer().Start(Browser.CHROME);
+            Web = new WebInitializer().Start();
             Web.Navigate().GoToUrl(ConfigurationManager.AppSettings["url"]);
-            Web.Manage().Window.Maximize();
         }
 
         public IWebDriver Web { get; private set; }

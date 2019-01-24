@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using QA.Web.UITests.Views.Common;
-using SeleniumExtras.PageObjects;
 
 namespace QA.Web.UITests.Views.Home
 {
@@ -8,22 +7,17 @@ namespace QA.Web.UITests.Views.Home
     {
         public HomePageLocator(WebUser webUser) : base(webUser) {}
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='talk-to-us']")]
-        public IWebElement AboutUs { get; set; }
+        public IWebElement AboutUs => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='talk-to-us']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='services']")]
-        public IWebElement Services { get; set; }
+        public IWebElement Services => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='services']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='our-work']")]
-        public IWebElement OurWork { get; set; }
+        public IWebElement OurWork => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='our-work']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='blog']")]
-        public IWebElement Blog { get; set; }
+        public IWebElement Blog => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='blog']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='careers']")]
-        public IWebElement Careers { get; set; }
+        public IWebElement Careers => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='careers']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#main-header .nav-menu-top li a[href*='talk-to-us']")]
-        public IWebElement TalkToUs { get; set; }
+        public IWebElement TalkToUs => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='talk-to-us']"));
+
     }
 }

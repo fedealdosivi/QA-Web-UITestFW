@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium;
 using QA.Web.UITests.Views.Common;
-using SeleniumExtras.PageObjects;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
@@ -8,31 +7,23 @@ namespace QA.Web.UITests.Views.TalkToUs
     {
         public TalkToUsPageLocator(WebUser webUser) : base(webUser) { }
 
-        [FindsBy(How = How.CssSelector, Using = "#lets-connect a")]
-        public IWebElement LetsConnect { get; set; }
+        public IWebElement LetsConnect => Web.FindElement(By.CssSelector("#lets-connect a"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects input#input1")]
-        public IWebElement NameField { get; set; }
+        public IWebElement NameField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects input#input1"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects input#input2")]
-        public IWebElement EmailField { get; set; }
+        public IWebElement EmailField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects input#input2"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects textarea#input3")]
-        public IWebElement MessageField { get; set; }
+        public IWebElement MessageField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects textarea#input3"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects #button_form_talk_to_us")]
-        public IWebElement SendButton { get; set; }
+        public IWebElement SendButton => Web.FindElement(By.CssSelector("#talk-to-us_new-projects #button_form_talk_to_us"));
 
-        [FindsBy(How = How.CssSelector, Using = "div.modal--content--success h2")]
-        public IWebElement ConfirmationText { get; set; }
+        public IWebElement ConfirmationText => Web.FindElement(By.CssSelector("div.modal--content--success h2"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects label[data-text='Name:']")]
-        public IWebElement ErrorNameField { get; set; }
+        public IWebElement ErrorNameField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects label[data-text='Name:']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects label[data-text='Email:']")]
-        public IWebElement ErrorEmailField { get; set; }
+        public IWebElement ErrorEmailField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects label[data-text='Email:']"));
 
-        [FindsBy(How = How.CssSelector, Using = "#talk-to-us_new-projects label[data-text='Message:']")]
-        public IWebElement ErrorMessageField { get; set; }
+        public IWebElement ErrorMessageField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects label[data-text='Message:']"));
+
     }
 }
