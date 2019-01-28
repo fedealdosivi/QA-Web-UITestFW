@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using Microsoft.Win32;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -51,12 +52,12 @@ namespace QA.Web.UITests
 
         private RemoteWebDriver SetIEDriver()
         {
-           // EnableIEProtectedMode();
+            EnableIEProtectedMode();
             InternetExplorerOptions options = new InternetExplorerOptions
             {
                 IgnoreZoomLevel = true,
-               // PageLoadStrategy = InternetExplorerPageLoadStrategy.Normal
             };
+
             Driver = new InternetExplorerDriver(InternetExplorerDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(90));
             return SetDriverProperties(Driver);
         }
@@ -67,8 +68,7 @@ namespace QA.Web.UITests
             {
                BrowserExecutableLocation = GetFirefoxBinaryPath()
             };
-            Driver = new FirefoxDriver();
-            //new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(60));
+            Driver = new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(60));
             return SetDriverProperties(Driver);
         }
 
@@ -76,6 +76,19 @@ namespace QA.Web.UITests
         {
             var path = "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"; 
             return path;
+        }
+
+        private void EnableIEProtectedMode()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\" + i.ToString(), true);
+                if (key != null)
+                {
+                    key.SetValue("2500", "0", RegistryValueKind.DWord);
+                    key.Close();
+                }
+            }
         }
     }
 }

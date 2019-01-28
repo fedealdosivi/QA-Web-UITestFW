@@ -3,9 +3,14 @@ using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
-    public class TalkToUsPageLocator : BasicViewLocator
+    public class TalkToUsPageLocator 
     {
-        public TalkToUsPageLocator(WebUser webUser) : base(webUser) { }
+        IWebDriver Web;
+
+        public TalkToUsPageLocator(WebUser webUser)
+        {
+            Web = webUser.Web;
+        }
 
         public IWebElement LetsConnect => Web.FindElement(By.CssSelector("#lets-connect a"));
 

@@ -18,7 +18,7 @@ namespace QA.Web.UITests.Views.Common
         public HomePage VisitHomePage() => new HomePage(this);
 
 
-        private String GetSelectedBrowser()
+        public String GetSelectedBrowser()
         {
             return ConfigurationManager.AppSettings["selectedBrowser"];
         }

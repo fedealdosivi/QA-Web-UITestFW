@@ -1,12 +1,11 @@
-﻿using System.Threading;
-using NUnit.Framework;
-using QA.Web.UITests.Views.Common;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
-    public class TalkToUsPageChecker : BasicViewChecker
+    public class TalkToUsPageChecker 
     {
-        public TalkToUsPageChecker(WebUser webUser, TalkToUsPage view) : base(webUser)
+        public TalkToUsPageChecker(TalkToUsPage view) 
         {
             View = view;
         }
@@ -15,7 +14,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage EmailConfirmation()
         {
-            Thread.Sleep(5000);
+            View.ExplicitWait(By.CssSelector("div.modal--content--success h2"));
             Assert.IsTrue(View.Locate.ConfirmationText.Text.Equals("Thanks for getting in touch with us!"));
             return View;
         }

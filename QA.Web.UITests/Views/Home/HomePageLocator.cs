@@ -3,9 +3,13 @@ using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Views.Home
 {
-    public class HomePageLocator : BasicViewLocator
+    public class HomePageLocator 
     {
-        public HomePageLocator(WebUser webUser) : base(webUser) {}
+        IWebDriver Web;
+        public HomePageLocator(WebUser webUser) 
+        {
+            Web = webUser.Web;
+        }
 
         public IWebElement AboutUs => Web.FindElement(By.CssSelector("#main-header .nav-menu-top li a[href*='talk-to-us']"));
 

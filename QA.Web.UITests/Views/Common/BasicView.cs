@@ -4,15 +4,14 @@ using OpenQA.Selenium.Support.UI;
 
 namespace QA.Web.UITests.Views.Common
 {
-    public abstract class BasicView
+    public class BasicView
     {
-
         protected BasicView(WebUser webUser)
         {
             WebUser = webUser;
         }
 
-        public WebUser WebUser { get; }
+        public WebUser WebUser { get; set; }
 
         public IWebDriver Web => WebUser.Web;
 

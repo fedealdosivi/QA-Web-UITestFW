@@ -47,7 +47,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPageChecker Verify()
         {
-            return new TalkToUsPageChecker(WebUser, this);
+            return new TalkToUsPageChecker(this);
         }
 
     }

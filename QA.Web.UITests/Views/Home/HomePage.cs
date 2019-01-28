@@ -20,7 +20,7 @@ namespace QA.Web.UITests.Views.Home
 
         public HomePageChecker Verify()
         {
-            return new HomePageChecker(WebUser, this);
+            return new HomePageChecker(this);
         }
     }
 }
