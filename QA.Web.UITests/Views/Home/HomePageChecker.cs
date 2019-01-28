@@ -1,11 +1,10 @@
 ﻿using NUnit.Framework;
-using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Views.Home
 {
-    public class HomePageChecker : BasicViewChecker
+    public class HomePageChecker 
     {
-        public HomePageChecker(WebUser webUser, HomePage view) : base(webUser)
+        public HomePageChecker(HomePage view) 
         {
             View = view;
         }

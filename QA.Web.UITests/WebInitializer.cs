@@ -1,37 +1,41 @@
 ﻿using System;
-using OpenQA.Selenium;
+using System.Configuration;
+using Microsoft.Win32;
 using OpenQA.Selenium.Chrome;
-using QA.Web.UITests.Utils.Browsers;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Remote;
 
 namespace QA.Web.UITests
 {
     public class WebInitializer
     {
-        public static IWebDriver Driver { get; private set; }
-        public IWebDriver Start(Browser browser)
+        public static RemoteWebDriver Driver { get; private set; }
+
+        public RemoteWebDriver Start()
         {
+            string browser = ConfigurationManager.AppSettings["browser"];
             switch (browser)
             {
-                case Browser.CHROME:
-                    Driver = new ChromeDriver(ChromeDriverService.CreateDefaultService());
-                    Driver.Manage().Window.Maximize();
-                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60);
+                case "CHROME":
+                    Driver = SetChromeDriver();
                     break;
 
-                case Browser.IE:
-                    Driver = new ChromeDriver("C:");
+                case "IE":
+                    Driver = SetIEDriver();
                     break;
-                //     break;
-                case Browser.FIREFOX:
-                    Driver = new ChromeDriver("C:");
+                
+                case "FIREFOX":
+                    Driver = SetFirefoxDriver();
                     break;
+
                 default:
                     throw new Exception("A driver must be specified in App.config");
             }
             return Driver;
         }
 
-        private IWebDriver SetChromeDriver()
+        private RemoteWebDriver SetChromeDriver()
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("disable-infobars");
@@ -39,10 +43,52 @@ namespace QA.Web.UITests
             return SetDriverProperties(Driver);
         }
 
-        private IWebDriver SetDriverProperties(IWebDriver driver)
+        private RemoteWebDriver SetDriverProperties(RemoteWebDriver driver)
         {
-            driver.Manage().Window.Maximize();
-            return driver;
+            Driver.Manage().Window.Maximize();
+            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60);
+            return Driver;
+        }
+
+        private RemoteWebDriver SetIEDriver()
+        {
+            EnableIEProtectedMode();
+            InternetExplorerOptions options = new InternetExplorerOptions
+            {
+                IgnoreZoomLevel = true,
+            };
+
+            Driver = new InternetExplorerDriver(InternetExplorerDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(90));
+            return SetDriverProperties(Driver);
+        }
+
+        private RemoteWebDriver SetFirefoxDriver()
+        {
+            FirefoxOptions options = new FirefoxOptions
+            {
+               BrowserExecutableLocation = GetFirefoxBinaryPath()
+            };
+            Driver = new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(60));
+            return SetDriverProperties(Driver);
+        }
+
+        private string GetFirefoxBinaryPath()
+        {
+            var path = "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"; 
+            return path;
+        }
+
+        private void EnableIEProtectedMode()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\" + i.ToString(), true);
+                if (key != null)
+                {
+                    key.SetValue("2500", "0", RegistryValueKind.DWord);
+                    key.Close();
+                }
+            }
         }
     }
 }

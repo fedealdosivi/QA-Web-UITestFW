@@ -1,5 +1,5 @@
-﻿using QA.Web.UITests.Views.Common;
-using SeleniumExtras.PageObjects;
+﻿using OpenQA.Selenium;
+using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
@@ -8,7 +8,6 @@ namespace QA.Web.UITests.Views.TalkToUs
         public TalkToUsPage(WebUser webUser) : base(webUser)
         {
             Locate = new TalkToUsPageLocator(webUser);
-            PageFactory.InitElements(Web, Locate);
         }
 
         public TalkToUsPageLocator Locate { get; }
@@ -16,6 +15,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage ClickOnLetsConnect()
         {
+            ExplicitWait(By.CssSelector("#lets-connect a"));
             Locate.LetsConnect.Click();
             return this;
         }
@@ -40,16 +40,15 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage ClickOnSend()
         {
+            ExplicitWait(By.CssSelector("#talk-to-us_new-projects #button_form_talk_to_us"));
             Locate.SendButton.Click();
             return this;
         }
 
         public TalkToUsPageChecker Verify()
         {
-            return new TalkToUsPageChecker(WebUser, this);
+            return new TalkToUsPageChecker(this);
         }
-
-     
 
     }
 }
