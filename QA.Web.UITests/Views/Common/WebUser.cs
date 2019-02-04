@@ -20,7 +20,7 @@ namespace QA.Web.UITests.Views.Common
 
         public String GetSelectedBrowser()
         {
-            return ConfigurationManager.AppSettings["selectedBrowser"];
+            return ConfigurationManager.AppSettings["browser"];
         }
 
     }

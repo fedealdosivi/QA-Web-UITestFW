@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Win32;
 using OpenQA.Selenium;
@@ -35,53 +36,48 @@ namespace QA.Web.UITests
                     throw new Exception("A driver must be specified in App.config");
             }
 
-            //Common capabilities  
-             DesiredCapabilities capability = new DesiredCapabilities();
-             capability.SetCapability("os", "Windows");
-             capability.SetCapability("os_version", "10");
-            /* capability.SetCapability("browser", "Firefox");
-             capability.SetCapability("browser_version", "65.0 beta");*/
-            /* capability.SetCapability("browser", "Chrome");
-             capability.SetCapability("browser_version", "71.0");
-             */
-             capability.SetCapability("resolution", "1280x1024");
-             capability.SetCapability("project", "QA_Web_UITests");
-             capability.SetCapability("build", "Build 1.0");
-             capability.SetCapability("name", "BasicTest");
-             capability.SetCapability("browserstack.local", "false");
-             capability.SetCapability("browserstack.selenium_version", "3.5.2");
-             capability.SetCapability("browserstack.user", "sergiomarchetti1");
-             capability.SetCapability("browserstack.key", "YmPqJpVnLiYJEeR4yxdR");
+            //Create Remote WebDriver
+            string browserstackUsername = ConfigurationManager.AppSettings["browserstack_user"];
+            string browserstackAccessKey = ConfigurationManager.AppSettings["browserstack_key"];
+            string server = ConfigurationManager.AppSettings["server_configuration"];
+            
+            var browserstackUrl = "";
 
-
-            string browserstackUrl = "http://hub-cloud.browserstack.com/wd/hub/";
-            Driver = new RemoteWebDriver(new Uri(browserstackUrl), capability);
-            Driver.Navigate().GoToUrl("http://makingsense.com");
+            switch (server)
+            {
+                case "BROWSERSTACK":
+                      browserstackUrl = string.Format(
+                                        "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub",
+                                           browserstackUsername,
+                                           browserstackAccessKey);
+                      break;
+                case "LOCAL":
+                     browserstackUrl = string.Format("http://" + ConfigurationManager.AppSettings["local_server"] + "/wd/hub");
+                     break;
+                default: 
+                    throw new Exception("A server Configuration driver must be specified in App.config");
+            }
+          
+            Driver = new RemoteWebDriver(new Uri(browserstackUrl), options.ToCapabilities());
+            
             return Driver;
         }
 
         private DriverOptions SetChromeOptions()
         {
-            ChromeOptions chromeOptions = new ChromeOptions();
+            var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("disable-infobars");
             chromeOptions.AddArgument("--disable-plugins");
-
-          /*  chromeOptions.AcceptInsecureCertificates = true;
-            chromeOptions.AddAdditionalCapability("browserstack.user", "sergiomarchetti1");
-            chromeOptions.AddAdditionalCapability("browserstack.key", "YmPqJpVnLiYJEeR4yxdR");
-            chromeOptions.AddAdditionalCapability("version", "70", true);
-            chromeOptions.AddAdditionalCapability("platform", "Windows 10", true);*/
-
-            //   options.AddAdditionalCapability("browserstack.key", "M4xekjhYuaFGxy4fEboz");
-            // Driver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), chromeOptions, TimeSpan.FromSeconds(90));
-            return chromeOptions;//SetDriverProperties(Driver);
-        }
-
-        private RemoteWebDriver SetDriverProperties(RemoteWebDriver driver)
-        {
-            driver.Manage().Window.Maximize();
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60);
-            return driver;
+            chromeOptions.AcceptInsecureCertificates = true;
+ 
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "chrome") as NameValueCollection;
+            
+            foreach (string key in caps.AllKeys)
+            {
+                chromeOptions.AddAdditionalCapability(key, caps[key], true);
+            }
+         
+            return chromeOptions;
         }
 
         private DriverOptions SetIEOptions()
@@ -92,20 +88,33 @@ namespace QA.Web.UITests
                 IgnoreZoomLevel = true,
             };
 
-            Driver = new InternetExplorerDriver(InternetExplorerDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(90));
-            return options;// SetDriverProperties(Driver);
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "ie") as NameValueCollection;
+
+            foreach (string key in caps.AllKeys)
+            {
+                options.AddAdditionalCapability(key, caps[key], true);
+            }
+
+            return options;
         }
 
         private DriverOptions SetFirefoxOptions()
         {
-            FirefoxOptions firefoxProfile = new FirefoxOptions
+            var firefoxProfile = new FirefoxOptions
             {
                BrowserExecutableLocation = GetFirefoxBinaryPath()
             };
+
             firefoxProfile.SetPreference("plugin.state.flash", 0);
+ 
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "firefox") as NameValueCollection;
             
-            //new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), firefoxProfile, TimeSpan.FromSeconds(60));
-            return firefoxProfile;// SetDriverProperties(Driver);
+            foreach (string key in caps.AllKeys)
+            {
+                firefoxProfile.AddAdditionalCapability(key, caps[key], true);
+            }
+
+            return firefoxProfile;
         }
 
         private string GetFirefoxBinaryPath()
