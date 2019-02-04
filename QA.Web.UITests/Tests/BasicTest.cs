@@ -37,5 +37,21 @@ namespace QA.Web.UITests.Tests
                 .VisitHomePage()
                 .Verify().ElementsArePresentinMenu();
         }
+
+        [Test, Sequential]
+        public void TalkToUsWithInputDataTest([ValuesAttribute("InputData")] string names,
+            [ValuesAttribute("InputData")] string emails,
+            [ValuesAttribute("InputData")] string messages)
+        {
+            Web
+                .VisitHomePage()
+                .GotoTalkToUs()
+                .ClickOnLetsConnect()
+                .EnterName(names)
+                .EnterEmail(emails)
+                .EnterMessage(messages)
+                .ClickOnSend()
+                .Verify().EmailConfirmation();
+        }
     }
 }
