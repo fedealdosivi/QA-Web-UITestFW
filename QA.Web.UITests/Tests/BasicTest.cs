@@ -31,7 +31,7 @@ namespace QA.Web.UITests.Tests
         }
 
         [Test]
-        public void ElementsArePresentTest()
+        public void NavigationBarIsPresentTest()
         {
             Web
                 .VisitHomePage()

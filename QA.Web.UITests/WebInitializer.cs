@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Win32;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -10,47 +12,82 @@ namespace QA.Web.UITests
 {
     public class WebInitializer
     {
-        public static RemoteWebDriver Driver { get; private set; }
+        public static IWebDriver Driver { get; private set; }
 
-        public RemoteWebDriver Start()
+        public IWebDriver Start()
         {
+            DriverOptions options = null;
             string browser = ConfigurationManager.AppSettings["browser"];
             switch (browser)
             {
                 case "CHROME":
-                    Driver = SetChromeDriver();
+                    options = SetChromeOptions();
                     break;
 
                 case "IE":
-                    Driver = SetIEDriver();
+                    options = SetIEOptions();
                     break;
                 
                 case "FIREFOX":
-                    Driver = SetFirefoxDriver();
+                    options = SetFirefoxOptions();
                     break;
 
                 default:
                     throw new Exception("A driver must be specified in App.config");
             }
-            return Driver;
-        }
 
-        private RemoteWebDriver SetChromeDriver()
-        {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument("disable-infobars");
-            Driver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(90));
+            //Create Remote WebDriver
+            string browserstackUsername = ConfigurationManager.AppSettings["browserstack_user"];
+            string browserstackAccessKey = ConfigurationManager.AppSettings["browserstack_key"];
+            string server = ConfigurationManager.AppSettings["server_configuration"];
+            
+            var browserstackUrl = "";
+
+            switch (server)
+            {
+                case "BROWSERSTACK":
+                      browserstackUrl = string.Format(
+                                        "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub",
+                                           browserstackUsername,
+                                           browserstackAccessKey);
+                      break;
+                case "LOCAL":
+                     browserstackUrl = string.Format("http://" + ConfigurationManager.AppSettings["local_server"] + "/wd/hub");
+                     break;
+                default: 
+                    throw new Exception("A server Configuration driver must be specified in App.config");
+            }
+          
+            Driver = new RemoteWebDriver(new Uri(browserstackUrl), options.ToCapabilities());
+            
             return SetDriverProperties(Driver);
         }
 
-        private RemoteWebDriver SetDriverProperties(RemoteWebDriver driver)
+        private IWebDriver SetDriverProperties(IWebDriver driver)
         {
-            Driver.Manage().Window.Maximize();
-            Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60);
-            return Driver;
+            driver.Manage().Window.Maximize();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(60);
+            return driver;
         }
 
-        private RemoteWebDriver SetIEDriver()
+        private DriverOptions SetChromeOptions()
+        {
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("disable-infobars");
+            chromeOptions.AddArgument("--disable-plugins");
+            chromeOptions.AcceptInsecureCertificates = true;
+ 
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "chrome") as NameValueCollection;
+            
+            foreach (string key in caps.AllKeys)
+            {
+                chromeOptions.AddAdditionalCapability(key, caps[key], true);
+            }
+         
+            return chromeOptions;
+        }
+
+        private DriverOptions SetIEOptions()
         {
             EnableIEProtectedMode();
             InternetExplorerOptions options = new InternetExplorerOptions
@@ -58,18 +95,33 @@ namespace QA.Web.UITests
                 IgnoreZoomLevel = true,
             };
 
-            Driver = new InternetExplorerDriver(InternetExplorerDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(90));
-            return SetDriverProperties(Driver);
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "ie") as NameValueCollection;
+
+            foreach (string key in caps.AllKeys)
+            {
+                options.AddAdditionalCapability(key, caps[key], true);
+            }
+
+            return options;
         }
 
-        private RemoteWebDriver SetFirefoxDriver()
+        private DriverOptions SetFirefoxOptions()
         {
-            FirefoxOptions options = new FirefoxOptions
+            var firefoxProfile = new FirefoxOptions
             {
                BrowserExecutableLocation = GetFirefoxBinaryPath()
             };
-            Driver = new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), options, TimeSpan.FromSeconds(60));
-            return SetDriverProperties(Driver);
+
+            firefoxProfile.SetPreference("plugin.state.flash", 0);
+ 
+            NameValueCollection caps = ConfigurationManager.GetSection("capabilities/" + "firefox") as NameValueCollection;
+            
+            foreach (string key in caps.AllKeys)
+            {
+                firefoxProfile.AddAdditionalCapability(key, caps[key], true);
+            }
+
+            return firefoxProfile;
         }
 
         private string GetFirefoxBinaryPath()

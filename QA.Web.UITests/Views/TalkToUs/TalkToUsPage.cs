@@ -22,6 +22,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage EnterName(string text = "QA Test")
         {
+            ExplicitWait(By.CssSelector("#talk-to-us_new-projects input#input1"));
             Locate.NameField.SendKeys(text);
             return this;
         }
