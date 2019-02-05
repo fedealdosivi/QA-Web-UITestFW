@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using QA.Web.UITests.TestsData;
 using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Tests
@@ -37,19 +38,17 @@ namespace QA.Web.UITests.Tests
                 .VisitHomePage()
                 .Verify().ElementsArePresentinMenu();
         }
-
-        [Test, Sequential]
-        public void TalkToUsWithInputDataTest([ValuesAttribute("InputData")] string names,
-            [ValuesAttribute("InputData")] string emails,
-            [ValuesAttribute("InputData")] string messages)
+       
+        [Test, TestCaseSource(typeof(InputData), "FormData")]
+        public void TalkToUsWithInputDataTest(string name, string email, string message)
         {
             Web
                 .VisitHomePage()
                 .GotoTalkToUs()
                 .ClickOnLetsConnect()
-                .EnterName(names)
-                .EnterEmail(emails)
-                .EnterMessage(messages)
+                .EnterName(name)
+                .EnterEmail(email)
+                .EnterMessage(message)
                 .ClickOnSend()
                 .Verify().EmailConfirmation();
         }

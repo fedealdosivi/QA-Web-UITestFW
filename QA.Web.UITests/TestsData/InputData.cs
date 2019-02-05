@@ -1,23 +1,14 @@
-﻿namespace QA.Web.UITests.TestsData
+﻿using System.Collections.Generic;
+using NUnit.Framework;
+
+namespace QA.Web.UITests.TestsData
 {
-    public static class InputData
+    public class InputData
     {
-        public static string[] Names =
-         new string[]{
-                 "Celeste",
-                 "Betiana"
-         };
-
-        public static string[] Emails =
-         new string[]{
-                "csenoseain@makingsense.com",
-                 "bcastro@makingsense.com"
-         };
-
-        public static string[] Messages =
-         new string[]{
-                "Hello!!!",
-                "Running test"
-         };
+        public static IEnumerable<TestCaseData> FormData()
+        {
+            yield return new TestCaseData("Celeste", "csenoseain@makingsense.com", "Hello!!!");
+            yield return new TestCaseData("Betiana", "bcastro@makingsense.com" , "Running test");
+        }
     }
 }
