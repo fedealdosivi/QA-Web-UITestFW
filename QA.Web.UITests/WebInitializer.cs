@@ -16,51 +16,28 @@ namespace QA.Web.UITests
 
         public IWebDriver Start()
         {
-            DriverOptions options = null;
             string browser = ConfigurationManager.AppSettings["browser"];
+            string server = ConfigurationManager.AppSettings["server_configuration"];
+
             switch (browser)
             {
                 case "CHROME":
-                    options = SetChromeOptions();
+                    Driver = SetChromeOptions(server);
                     break;
 
                 case "IE":
-                    options = SetIEOptions();
+                    Driver = SetIEOptions(server);
                     break;
                 
                 case "FIREFOX":
-                    options = SetFirefoxOptions();
+                    Driver = SetFirefoxOptions(server);
                     break;
 
                 default:
-                    throw new Exception("A driver must be specified in App.config");
+                    throw new Exception("A Browser must be specified in App.config");
             }
 
-            //Create Remote WebDriver
-            string browserstackUsername = ConfigurationManager.AppSettings["browserstack_user"];
-            string browserstackAccessKey = ConfigurationManager.AppSettings["browserstack_key"];
-            string server = ConfigurationManager.AppSettings["server_configuration"];
-            
-            var browserstackUrl = "";
-
-            switch (server)
-            {
-                case "BROWSERSTACK":
-                      browserstackUrl = string.Format(
-                                        "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub",
-                                           browserstackUsername,
-                                           browserstackAccessKey);
-                      break;
-                case "LOCAL":
-                     browserstackUrl = string.Format("http://" + ConfigurationManager.AppSettings["local_server"] + "/wd/hub");
-                     break;
-                default: 
-                    throw new Exception("A server Configuration driver must be specified in App.config");
-            }
-          
-            Driver = new RemoteWebDriver(new Uri(browserstackUrl), options.ToCapabilities());
-            
-            return SetDriverProperties(Driver);
+          return SetDriverProperties(Driver);
         }
 
         private IWebDriver SetDriverProperties(IWebDriver driver)
@@ -70,7 +47,7 @@ namespace QA.Web.UITests
             return driver;
         }
 
-        private DriverOptions SetChromeOptions()
+        private IWebDriver SetChromeOptions(string server)
         {
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("disable-infobars");
@@ -83,11 +60,54 @@ namespace QA.Web.UITests
             {
                 chromeOptions.AddAdditionalCapability(key, caps[key], true);
             }
-         
-            return chromeOptions;
+
+            return CreateDriver(chromeOptions);
         }
 
-        private DriverOptions SetIEOptions()
+        private IWebDriver CreateDriver(DriverOptions options)
+        {
+            string server = ConfigurationManager.AppSettings["server_configuration"];
+            string browser = ConfigurationManager.AppSettings["browser"];
+            var url = "";
+
+            if (server == "LOCAL")
+            {
+                url = string.Format("http://" + ConfigurationManager.AppSettings["local_server"] + "/wd/hub");
+                switch (browser)
+                {
+                    case "CHROME":
+                        Driver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), (ChromeOptions) options, TimeSpan.FromSeconds(90));
+                        break;
+
+                    case "IE":
+                        Driver = new InternetExplorerDriver(InternetExplorerDriverService.CreateDefaultService(), (InternetExplorerOptions) options, TimeSpan.FromSeconds(90));
+                        break;
+
+                    case "FIREFOX":
+                        Driver = new FirefoxDriver(FirefoxDriverService.CreateDefaultService(), (FirefoxOptions) options, TimeSpan.FromSeconds(90));
+                        break;
+
+                    default:
+                        throw new Exception("A Browser must be specified in App.config");
+                }
+            }
+
+            else
+            {
+                //Create Remote WebDriver
+                string browserstackUsername = ConfigurationManager.AppSettings["browserstack_user"];
+                string browserstackAccessKey = ConfigurationManager.AppSettings["browserstack_key"];
+                url = string.Format(
+                                        "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub",
+                                           browserstackUsername,
+                                           browserstackAccessKey);
+                Driver = new RemoteWebDriver(new Uri(url), options.ToCapabilities());
+            
+            }
+            return Driver;
+        }
+
+        private IWebDriver SetIEOptions(string server)
         {
             EnableIEProtectedMode();
             InternetExplorerOptions options = new InternetExplorerOptions
@@ -102,10 +122,10 @@ namespace QA.Web.UITests
                 options.AddAdditionalCapability(key, caps[key], true);
             }
 
-            return options;
+            return CreateDriver(options);
         }
 
-        private DriverOptions SetFirefoxOptions()
+        private IWebDriver SetFirefoxOptions(string server)
         {
             var firefoxProfile = new FirefoxOptions
             {
@@ -120,8 +140,8 @@ namespace QA.Web.UITests
             {
                 firefoxProfile.AddAdditionalCapability(key, caps[key], true);
             }
-
-            return firefoxProfile;
+       
+            return CreateDriver(firefoxProfile);
         }
 
         private string GetFirefoxBinaryPath()
