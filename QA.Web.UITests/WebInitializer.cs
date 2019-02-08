@@ -16,7 +16,8 @@ namespace QA.Web.UITests
 
         public IWebDriver Start()
         {
-            string browser = ConfigurationManager.AppSettings["browser"];
+            var browser = GetBrowser();
+
             string server = ConfigurationManager.AppSettings["server_configuration"];
 
             switch (browser)
@@ -67,7 +68,7 @@ namespace QA.Web.UITests
         private IWebDriver CreateDriver(DriverOptions options)
         {
             string server = ConfigurationManager.AppSettings["server_configuration"];
-            string browser = ConfigurationManager.AppSettings["browser"];
+            var browser = GetBrowser();
             var url = "";
 
             if (server == "LOCAL")
@@ -142,6 +143,18 @@ namespace QA.Web.UITests
             }
        
             return CreateDriver(firefoxProfile);
+        }
+
+        private string GetBrowser()
+        {
+            var browser = Environment.GetEnvironmentVariable("BROWSER");
+
+            if (string.IsNullOrEmpty(browser))
+            {
+                browser = ConfigurationManager.AppSettings["browser"];
+            }
+            return browser;
+
         }
 
         private string GetFirefoxBinaryPath()
