@@ -96,9 +96,12 @@ namespace QA.Web.UITests
             else
             {
                 //Create Remote WebDriver
-                string browserstackUsername = ConfigurationManager.AppSettings["browserstack_user"];
-                string browserstackAccessKey = ConfigurationManager.AppSettings["browserstack_key"];
-                url = string.Format(
+                string bsUsername = Environment.GetEnvironmentVariable("BROWSERSTACK_USERNAME");
+                string bsAccessKey = Environment.GetEnvironmentVariable("BROWSERSTACK_ACCESS_KEY");
+                var browserstackUsername = (string.IsNullOrEmpty(bsUsername)) ? ConfigurationManager.AppSettings["browserstack_user"] : bsUsername;
+                var browserstackAccessKey = (string.IsNullOrEmpty(bsAccessKey)) ? ConfigurationManager.AppSettings["browserstack_key"] : bsAccessKey;
+              
+                    url = string.Format(
                                         "https://{0}:{1}@hub-cloud.browserstack.com/wd/hub",
                                            browserstackUsername,
                                            browserstackAccessKey);
