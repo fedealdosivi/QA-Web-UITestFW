@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using OpenQA.Selenium;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
@@ -14,7 +13,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage EmailConfirmation()
         {
-            View.ExplicitWait(By.CssSelector("div.modal--content--success h2"));
+            View.ExplicitWait(View.Locate.ConfirmationTextLocator);
             Assert.IsTrue(View.Locate.ConfirmationText.Text.Equals("Thanks for getting in touch with us!"));
             return View;
         }
