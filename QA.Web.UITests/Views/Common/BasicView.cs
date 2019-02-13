@@ -20,6 +20,5 @@ namespace QA.Web.UITests.Views.Common
             var wait = new WebDriverWait(Web, new TimeSpan(0, 0, 60));
             var element = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
         }
-        
     }
 }

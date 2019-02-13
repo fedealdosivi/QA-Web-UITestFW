@@ -11,18 +11,25 @@ namespace QA.Web.UITests.Views.TalkToUs
         {
             Web = webUser.Web;
         }
+        public By LetsConnectLocator => By.CssSelector("#lets-connect a");
 
-        public IWebElement LetsConnect => Web.FindElement(By.CssSelector("#lets-connect a"));
+        public IWebElement LetsConnect => Web.FindElement(LetsConnectLocator);
 
-        public IWebElement NameField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects input#input1"));
+        public By NameFieldLocator => By.CssSelector("#talk-to-us_new-projects input#input1");
+
+        public IWebElement NameField => Web.FindElement(NameFieldLocator);
 
         public IWebElement EmailField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects input#input2"));
 
         public IWebElement MessageField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects textarea#input3"));
 
-        public IWebElement SendButton => Web.FindElement(By.CssSelector("#talk-to-us_new-projects #button_form_talk_to_us"));
+        public By SendButtonLocator => By.CssSelector("#talk-to-us_new-projects #button_form_talk_to_us");
 
-        public IWebElement ConfirmationText => Web.FindElement(By.CssSelector("div.modal--content--success h2"));
+        public IWebElement SendButton => Web.FindElement(SendButtonLocator);
+
+        public By ConfirmationTextLocator => By.CssSelector("div.modal--content--success h2");
+
+        public IWebElement ConfirmationText => Web.FindElement(ConfirmationTextLocator);
 
         public IWebElement ErrorNameField => Web.FindElement(By.CssSelector("#talk-to-us_new-projects label[data-text='Name:']"));
 

@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using QA.Web.UITests.Views.Common;
+﻿using QA.Web.UITests.Views.Common;
 
 namespace QA.Web.UITests.Views.TalkToUs
 {
@@ -12,17 +11,16 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPageLocator Locate { get; }
 
-
         public TalkToUsPage ClickOnLetsConnect()
         {
-            ExplicitWait(By.CssSelector("#lets-connect a"));
+            ExplicitWait(Locate.LetsConnectLocator);
             Locate.LetsConnect.Click();
             return this;
         }
 
         public TalkToUsPage EnterName(string text = "QA Test")
         {
-            ExplicitWait(By.CssSelector("#talk-to-us_new-projects input#input1"));
+            ExplicitWait(Locate.NameFieldLocator);
             Locate.NameField.SendKeys(text);
             return this;
         }
@@ -41,7 +39,7 @@ namespace QA.Web.UITests.Views.TalkToUs
 
         public TalkToUsPage ClickOnSend()
         {
-            ExplicitWait(By.CssSelector("#talk-to-us_new-projects #button_form_talk_to_us"));
+            ExplicitWait(Locate.SendButtonLocator);
             Locate.SendButton.Click();
             return this;
         }
