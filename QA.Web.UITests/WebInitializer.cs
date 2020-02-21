@@ -162,7 +162,7 @@ namespace QA.Web.UITests
 
         private string GetFirefoxBinaryPath()
         {
-            var path = "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"; 
+            var path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"; 
             return path;
         }
 
